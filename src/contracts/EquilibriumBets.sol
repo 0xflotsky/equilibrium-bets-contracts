@@ -12,6 +12,12 @@ contract EquilibriumBets is Ownable, ReentrancyGuard {
     event Deposit(address indexed from, uint256 amount);
     event Withdrawal(address indexed to, uint256 amount);
 
+    enum Outcome {
+        OutcomeA,
+        OutcomeB,
+        InvalidOutcome
+    }
+
     IERC20 usdc;
 
     address private feeCollectorAddress;
@@ -33,10 +39,10 @@ contract EquilibriumBets is Ownable, ReentrancyGuard {
         feeCollectorAddress = _feeCollectorAddress;
     }
 
-    function approve(uint256 amount) external {
-        usdc.approve(address(this), amount);
-    }
-
+    /**
+     * @notice Deposits USDC tokens to the contract. Requires approval
+     * @param amount amount of USDC
+     */
     function deposit(uint256 amount) external nonReentrant notZeroAmount(amount) {
         require(amount >= 10e6, "Minimum deposited amount is 10 USDC");
 
